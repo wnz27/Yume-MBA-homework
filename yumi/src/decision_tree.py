@@ -2,7 +2,7 @@
 Author: 27
 LastEditors: 27
 Date: 2024-04-13 18:28:42
-LastEditTime: 2024-04-13 22:35:07
+LastEditTime: 2024-04-13 23:19:01
 FilePath: /Yume-MBA-homework/yumi/src/decision_tree.py
 description: type some description
 '''
@@ -168,7 +168,9 @@ def decision_tree_demo():
     dummyX = vec.fit_transform(feature_list) .toarray()   #特征值转化是整形数据
  
     print("dummyX: " + str(dummyX))
+
     print(vec.get_feature_names_out())
+    # ['age_group' 'channel' 'gender' 'price' 'product_type' 'qty']
  
     # print("labelList: " + str(label_list))
  
@@ -180,14 +182,56 @@ def decision_tree_demo():
     # 使用决策树进行分类预测处理
     # clf = tree.DecisionTreeClassifier()
     #自定义采用信息熵的方式确定根节点
-    clf = tree.DecisionTreeClassifier(criterion='entropy')
-    clf = clf.fit(dummyX, dummyY)
+    """
+    tree.DecisionTreeClassifier(class_weight=None, #balanced & None 可选
+                            criterion='gini',#"gini"或者"entropy"，前者代表基尼系数，后者代表信息增益。
+                            max_depth=None,#max_depth控制树的深度防止overfitting
+            max_features=None, #可使用多种类型值，默认是"None",划分时考虑所有的特征数；
+                               #"log2" 划分时最多考虑log2Nlog2N个特征；
+                               #"sqrt"或者"auto" 划分时最多考虑√N个特征。
+                               #整数，代表考虑的特征绝对数。
+                               #浮点数，代表考虑特征百分比，即考虑（百分比xN）取整后的特征数。
+                               #其中N为样本总特征数。
+            max_leaf_nodes=None,#最大叶节点树
+            min_impurity_split=1e-07, #限制决策树的增长，
+                            #如果某节点的不纯度(基尼系数，信息增益)小于这个阈值，则该节点不再生成子节点，即为叶子节点。 
+            min_samples_leaf=1,min_samples_split=2,#min_samples_split或min_samples_leaf来控制叶节点上的样本数量；
+            #两者之间的主要区别在于min_samples_leaf保证了叶片中最小的样本数量，而min_samples_split可以创建任意的小叶子。但min_samples_split在文献中更常见。
+            min_weight_fraction_leaf=0.0,#限制叶子节点所有样本权重和的最小值。如果小于这个值，则会和兄弟节点一起被剪枝。
+                            # 默认是0，就是不考虑权重问题。
+                            #一般来说，如果我们有较多样本有缺失值，或者分类树样本的分布类别偏差很大，
+                            #就会引入样本权重，这时我们就要注意这个值了。
+            presort=False,#布尔值，默认是False不排序。预排序，提高效率。
+                          #设置为true可以让划分点选择更加快，决策树建立的更加快。
+            random_state=None, #随机生成器种子设置，默认设置为None，如此，则每次模型结果都会有所不同。
+            splitter='best')#split"best"或者"random"。
+           #前者在特征的所有划分点中找出最优的划分点。
+           #后者是随机的在部分划分点中找局部最优的划分点。
+           #默认的"best"适合样本量不大的时候，而如果样本数据量非常大，此时决策树构建推荐"random"。
+    """
+    clf = tree.DecisionTreeClassifier(max_depth=10, criterion='entropy')
+    # 使用百分之 80 的数据进行训练， 使用百分之 20 的数据进行测试
+    split_idx = int(len(dummyX)*0.8)
+
+    clf = clf.fit(dummyX[:split_idx], dummyY[:split_idx])
     print("clf: " + str(clf))
+
+    # 训练完 使用决策树对测试集数据进行分类
+    test_x = dummyX[split_idx:]
+    test_y = dummyY[split_idx:]
+    score = clf.score(test_x, test_y)
+    print("score: ------>", score)
+    # score: ------> 0.9178743961352657
+
     
     # Visualize model
     with open("/Users/f27/self_biz/Yume-MBA-homework/yumi/src/allElectronicInformationGainOri.dot", 'w') as f:
         f = tree.export_graphviz(clf, feature_names=vec.get_feature_names_out(), out_file=f)
     
+
+
+def draw_effect():
+    pass
 
 
 
