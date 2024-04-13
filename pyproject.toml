@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "yumi"
+version = "0.1.0"
+description = ""
+authors = ["wnz27 <wnz27@icloud.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pydantic = "2.5.3"
+scikit-learn = "1.4.0"
+six = "^1.16.0"
+
+
+[[tool.poetry.source]]
+name = "th"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple"
+priority = "primary"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+# python 相关示例 demo
+demo = "yumi.src.main:main"
+
+# 代码测试
+decision_tree = "yumi.src.decision_tree:decision_tree_demo"
+other_al = "yumi.src.decision_tree:decision_tree_demo"
