@@ -2,13 +2,14 @@
 Author: 27
 LastEditors: 27
 Date: 2024-04-13 18:28:42
-LastEditTime: 2024-04-13 23:19:01
+LastEditTime: 2024-04-13 23:46:57
 FilePath: /Yume-MBA-homework/yumi/src/decision_tree.py
 description: type some description
 '''
 import csv
 from typing import Dict, List, Tuple
 
+import matplotlib.pyplot as plt
 from sklearn.feature_extraction import DictVectorizer
 from sklearn import tree
 from sklearn import preprocessing
@@ -221,17 +222,16 @@ def decision_tree_demo():
     test_y = dummyY[split_idx:]
     score = clf.score(test_x, test_y)
     print("score: ------>", score)
-    # score: ------> 0.9178743961352657
+    # score: ------> 0.9201288244766506
 
     
     # Visualize model
     with open("/Users/f27/self_biz/Yume-MBA-homework/yumi/src/allElectronicInformationGainOri.dot", 'w') as f:
         f = tree.export_graphviz(clf, feature_names=vec.get_feature_names_out(), out_file=f)
     
+    # tree.plot_tree(clf)
 
-
-def draw_effect():
+# TODO
+def draw_effect(x_train, y_train):
+    # 绘制决策边界
     pass
-
-
-

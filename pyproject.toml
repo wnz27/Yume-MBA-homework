@@ -10,6 +10,7 @@ python = "^3.10"
 pydantic = "2.5.3"
 scikit-learn = "1.4.0"
 six = "^1.16.0"
+matplotlib = "^3.8.4"
 
 
 [[tool.poetry.source]]
@@ -27,4 +28,4 @@ demo = "yumi.src.main:main"
 
 # 代码测试
 decision_tree = "yumi.src.decision_tree:decision_tree_demo"
-other_al = "yumi.src.decision_tree:decision_tree_demo"
+logic_r = "yumi.src.logic:logic_regression_demo"
