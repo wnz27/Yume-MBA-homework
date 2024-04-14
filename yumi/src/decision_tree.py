@@ -2,7 +2,7 @@
 Author: 27
 LastEditors: 27
 Date: 2024-04-13 18:28:42
-LastEditTime: 2024-04-13 23:46:57
+LastEditTime: 2024-04-14 12:10:08
 FilePath: /Yume-MBA-homework/yumi/src/decision_tree.py
 description: type some description
 '''
@@ -17,6 +17,8 @@ from sklearn import preprocessing
 # from sklearn.externals.six import StringIO
 from six import StringIO
 from pydantic import BaseModel, Field
+
+from yumi.src.draw import plot_decision_boundary
 
 channel_type = {
     "Ajio": 1,
@@ -210,28 +212,34 @@ def decision_tree_demo():
            #后者是随机的在部分划分点中找局部最优的划分点。
            #默认的"best"适合样本量不大的时候，而如果样本数据量非常大，此时决策树构建推荐"random"。
     """
-    clf = tree.DecisionTreeClassifier(max_depth=10, criterion='entropy')
+    dt_model = tree.DecisionTreeClassifier(max_depth=10, criterion='entropy')
     # 使用百分之 80 的数据进行训练， 使用百分之 20 的数据进行测试
     split_idx = int(len(dummyX)*0.8)
+    x_train = dummyX[:split_idx]
+    y_train = dummyY[:split_idx]
 
-    clf = clf.fit(dummyX[:split_idx], dummyY[:split_idx])
-    print("clf: " + str(clf))
+    dt_model = dt_model.fit(x_train, y_train)
+    print("clf: " + str(dt_model))
 
     # 训练完 使用决策树对测试集数据进行分类
     test_x = dummyX[split_idx:]
     test_y = dummyY[split_idx:]
-    score = clf.score(test_x, test_y)
+    score = dt_model.score(test_x, test_y)
     print("score: ------>", score)
     # score: ------> 0.9201288244766506
 
     
     # Visualize model
     with open("/Users/f27/self_biz/Yume-MBA-homework/yumi/src/allElectronicInformationGainOri.dot", 'w') as f:
-        f = tree.export_graphviz(clf, feature_names=vec.get_feature_names_out(), out_file=f)
+        f = tree.export_graphviz(dt_model, feature_names=vec.get_feature_names_out(), out_file=f)
     
     # tree.plot_tree(clf)
+    draw_effect(dt_model, x_train, y_train)
 
 # TODO
-def draw_effect(x_train, y_train):
+def draw_effect(dt_model, x_train, y_train):
     # 绘制决策边界
-    pass
+    plot_decision_boundary(dt_model, axis=[50, 300, 0, 200])
+    plt.scatter(x_train[y_train==0,0], x_train[y_train==0,1])
+    plt.scatter(y_train[y_train==1,0], y_train[y_train==1,1])
+    plt.show()

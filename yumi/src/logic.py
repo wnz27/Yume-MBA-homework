@@ -1,5 +1,6 @@
 from typing import Dict, List, Tuple
 
+import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.feature_extraction import DictVectorizer
 from sklearn import tree
@@ -10,7 +11,9 @@ from sklearn.metrics import classification_report
 # from sklearn.externals.six import StringIO
 from six import StringIO
 from pydantic import BaseModel, Field
+
 from yumi.src.decision_tree import extract_csv_data, get_feature_list_and_label_List
+from yumi.src.draw import plot_decision_boundary
 
 # 逻辑回归
 def logic_regression_demo():
@@ -20,6 +23,10 @@ def logic_regression_demo():
     # Vetorize features:将特征值数值化
     vec = DictVectorizer()    #整形数字转化
     dummyX = vec.fit_transform(feature_list) .toarray()   #特征值转化是整形数据
+    # 减少样本量
+    split1_idx = int(len(dummyX) * 0.2)
+    dummyX = dummyX[:split1_idx]
+    label_list = label_list[:split1_idx]
  
     print("dummyX: " + str(dummyX))
 
@@ -78,18 +85,20 @@ Logistic回归的目的是寻找一个非线性函数Sigmoid的最佳拟合参�
 机器学习的一个重要问题就是如何处理缺失数据。这个问题没有标准答案，取决于实际应用中的需求。现有一些解决方案，每种方案都各有优缺点。
 我们需要根据数据的情况，这是Sklearn的参数，以期达到更好的分类效果。
     """
-    clf = LogisticRegression()
+    lr_model = LogisticRegression(max_iter=10)
     # 使用百分之 80 的数据进行训练， 使用百分之 20 的数据进行测试
     split_idx = int(len(dummyX)*0.8)
+    x_train = dummyX[:split_idx]
+    y_train = dummyY[:split_idx]
 
-    clf = clf.fit(dummyX[:split_idx], dummyY[:split_idx])
-    print("clf: " + str(clf))
+    lr_model = lr_model.fit(x_train, y_train)
+    print("clf: " + str(lr_model))
 
     # 训练完 使用决策树对测试集数据进行分类
     test_x = dummyX[split_idx:]
     test_y = dummyY[split_idx:]
 
-    y_pred = clf.predict(test_x)
+    y_pred = lr_model.predict(test_x)
     print(
         classification_report(test_y, y_pred)
     )
@@ -106,11 +115,24 @@ weighted avg       0.85      0.92      0.88      6210
 score: ------> 0.9201288244766506
     """
 
-    score = clf.score(test_x, test_y)
+    score = lr_model.score(test_x, test_y)
     print("score: ------>", score)
     # score: ------> 0.9180354267310789
 
     
     # tree.plot_tree(clf)
+    # draw_effect(lr_model, x_train, y_train)
 
-# TODO
+# 绘制模型准确度量
+# def x2(lr_model, x1): 
+    # return (-lr_model.coef_[])
+
+
+
+def draw_effect(lr_model, x_train, y_train):
+    # 绘制决策边界
+    plot_decision_boundary(lr_model, axis=[50, 300, 0, 200])
+    plt.scatter(x_train[y_train==0,0], x_train[y_train==0,1])
+    plt.scatter(y_train[y_train==1,0], y_train[y_train==1,1])
+    plt.show()
+
