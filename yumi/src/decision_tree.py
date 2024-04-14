@@ -2,7 +2,7 @@
 Author: 27
 LastEditors: 27
 Date: 2024-04-13 18:28:42
-LastEditTime: 2024-04-14 12:10:08
+LastEditTime: 2024-04-14 13:58:55
 FilePath: /Yume-MBA-homework/yumi/src/decision_tree.py
 description: type some description
 '''
@@ -97,6 +97,16 @@ class OrderItem(BaseModel):
     price: float = Field(title="价格")
     qty: int = Field(title="数量")
     is_buy: bool = Field(title="是否购买")  
+
+    def result_by_model(self, model):
+        vec = DictVectorizer()
+        feature_list = [self.to_feature_dict()]
+        #整形数字转化
+        dummyX = vec.fit_transform(feature_list) .toarray()
+
+        res = model.predict(dummyX)
+        print(res, type(res))
+        print(bool(res[0]))
     
     @classmethod
     def BuildOrderItem(cls, gender: str, age: int, channel: str, product_type: str, price: float, qty: int, status: str) -> "OrderItem":
@@ -126,8 +136,10 @@ def get_feature_list_and_label_List(
     feature_list = []
     label_list = []
     for order in order_list:
-        feature_list.append(order.to_feature_dict())
+        # print(order.is_buy)
         label_list.append(order.is_buy)
+        feature_list.append(order.to_feature_dict())
+        
     return feature_list, label_list
     
 
@@ -234,7 +246,8 @@ def decision_tree_demo():
         f = tree.export_graphviz(dt_model, feature_names=vec.get_feature_names_out(), out_file=f)
     
     # tree.plot_tree(clf)
-    draw_effect(dt_model, x_train, y_train)
+    # draw_effect(dt_model, x_train, y_train)
+    return dt_model
 
 # TODO
 def draw_effect(dt_model, x_train, y_train):
@@ -243,3 +256,15 @@ def draw_effect(dt_model, x_train, y_train):
     plt.scatter(x_train[y_train==0,0], x_train[y_train==0,1])
     plt.scatter(y_train[y_train==1,0], y_train[y_train==1,1])
     plt.show()
+
+# 模型真实场景的使用
+def application_real_scene(dt_model: tree.DecisionTreeClassifier, order: OrderItem):
+    order.result_by_model(dt_model)
+
+
+def main():
+    m = decision_tree_demo()
+    
+    application_real_scene(m, OrderItem.BuildOrderItem(
+            "Women", int(20), "Amazon", "kurta", float(630), int(1), ""
+            ))

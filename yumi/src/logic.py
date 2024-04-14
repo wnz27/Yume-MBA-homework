@@ -12,7 +12,7 @@ from sklearn.metrics import classification_report
 from six import StringIO
 from pydantic import BaseModel, Field
 
-from yumi.src.decision_tree import extract_csv_data, get_feature_list_and_label_List
+from yumi.src.decision_tree import extract_csv_data, get_feature_list_and_label_List, OrderItem
 from yumi.src.draw import plot_decision_boundary
 
 # 逻辑回归
@@ -122,6 +122,7 @@ score: ------> 0.9201288244766506
     
     # tree.plot_tree(clf)
     # draw_effect(lr_model, x_train, y_train)
+    return lr_model
 
 # 绘制模型准确度量
 # def x2(lr_model, x1): 
@@ -136,3 +137,14 @@ def draw_effect(lr_model, x_train, y_train):
     plt.scatter(y_train[y_train==1,0], y_train[y_train==1,1])
     plt.show()
 
+
+# 模型真实场景的使用
+def application_real_scene(lr_model: LogisticRegression, order: OrderItem):
+    order.result_by_model(lr_model)
+
+def main():
+    m = logic_regression_demo()
+    application_real_scene(m, OrderItem.BuildOrderItem(
+            "Men", int(50), "Amazon", "Set", float(630), int(1), ""
+            ))
+    pass

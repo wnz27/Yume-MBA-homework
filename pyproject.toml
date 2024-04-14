@@ -28,4 +28,6 @@ demo = "yumi.src.main:main"
 
 # 代码测试
 decision_tree = "yumi.src.decision_tree:decision_tree_demo"
+decision_tree_real = "yumi.src.decision_tree:main"
 logic_r = "yumi.src.logic:logic_regression_demo"
+logic_r_real = "yumi.src.logic:main"
